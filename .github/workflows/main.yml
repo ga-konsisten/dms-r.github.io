@@ -1,4 +1,5 @@
 name: Build Armbian Image
+
 on:
   push:
     branches:
@@ -7,19 +8,49 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      armbian_board:
+        description: "Select hardware platform (e.g., uefi-x86, orangepi5, bananapif3)"
+        required: false
+        default: "uefi-x86"
+      armbian_release:
+        description: "Choose userspace release (e.g., trixie, bookworm, noble)"
+        required: false
+        default: "trixie"
+      armbian_kernel_branch:
+        description: "Choose kernel branch (current, edge, legacy)"
+        required: false
+        default: "current"
+      armbian_ui:
+        description: "Armbian user interface (server, xfce, cinnamon, minimal)"
+        required: false
+        default: "cinnamon"
+      armbian_compress:
+        description: "Armbian compress method (xz, img, sha,img,xz)"
+        required: false
+        default: "xz"
+      armbian_runner_clean:
+        description: "Make some space on GH runners (yes or leave empty)"
+        required: false
+        default: "yes"
 
 jobs:
   build:
-    runs-on: ubuntu-latest # ubuntu-24.04-arm, ubuntu-24.04-riscv
+    runs-on: ubuntu-latest
     steps:
-      - uses: armbian/build@main
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Execute Armbian Build Action
+        # Mengubah baris ini untuk mengambil langsung dari repositori resmi Armbian
+        uses: armbian/build@main
         with:
           armbian_token: ${{ secrets.GITHUB_TOKEN }}
-          armbian_board: "uefi-x86" # orangepi5 bananapif3
-          armbian_release: "trixie" # bookworm
+          # Meneruskan input dari manual dispatch, jika tidak ada (misal dipicu push) akan menggunakan default
+          armbian_board: ${{ github.event.inputs.armbian_board || 'uefi-x86' }}
+          armbian_release: ${{ github.event.inputs.armbian_release || 'trixie' }}
+          armbian_kernel_branch: ${{ github.event.inputs.armbian_kernel_branch || 'current' }}
+          armbian_ui: ${{ github.event.inputs.armbian_ui || 'xfce' }}
+          armbian_compress: ${{ github.event.inputs.armbian_compress || 'xz' }}
+          armbian_runner_clean: ${{ github.event.inputs.armbian_runner_clean || '' }}
           armbian_target: "build"
-          armbian_kernel_branch: "current"
-          # armbian_version: ""
-          armbian_compress: "xz" # xz img
-          armbian_ui: "xfce" # server xfce cinnamon
-          armbian_runner_clean: "no" # recommended for Github runners
