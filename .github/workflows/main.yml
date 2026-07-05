@@ -20,6 +20,6 @@ jobs:
           armbian_target: "build"
           armbian_kernel_branch: "current"
           # armbian_version: ""
-          armbian_compress: "img" # xz
-          armbian_ui: "cinnamon" # server xfce cinnamon
-          armbian_runner_clean: "yes" # recommended for Github runners
+          armbian_compress: "xz" # xz img
+          armbian_ui: "xfce" # server xfce cinnamon
+          armbian_runner_clean: "no" # recommended for Github runners
