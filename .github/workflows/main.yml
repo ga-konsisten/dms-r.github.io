@@ -1,0 +1,19 @@
+name: Build Armbian Image
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # ubuntu-24.04-arm, ubuntu-24.04-riscv
+    steps:
+      - uses: armbian/build@main
+        with:
+          armbian_token: ${{ secrets.GITHUB_TOKEN }}
+          armbian_board: "uefi-x86" # orangepi5 bananapif3
+          armbian_release: "trixie" # bookworm
+          armbian_target: "build"
+          armbian_kernel_branch: "current"
+          # armbian_version: ""
+          armbian_compress: "img" # xz
+          armbian_ui: "cinnamon" # server xfce cinnamon
+          armbian_runner_clean: "yes" # recommended for Github runners
